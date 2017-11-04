@@ -29,7 +29,7 @@ public class InitialLoader implements CommandLineRunner {
 
             System.out.println("Downloading recipes...");
             String json = restTemplate.getForObject("http://api.yummly.com/v1/api/recipes?_app_id=668c717d&_app_key=9123fc5b2c2a0742a8aa4ca1ef01bf35&maxResult=10", String.class);
-            System.out.println(json);
+
             System.out.println("Mapping recipes to object...");
             JsonNode arrNode = new ObjectMapper().readTree(json).get("matches");
             List<Recipe> recipes = new ObjectMapper().readValue(arrNode.toString(), new TypeReference<List<Recipe>>(){});
@@ -39,9 +39,6 @@ public class InitialLoader implements CommandLineRunner {
             recipeDAO.save(recipes);
         }
 
-
         System.out.println(recipeDAO.findAll().iterator().next());
-
-
     }
 }

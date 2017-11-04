@@ -66,7 +66,7 @@ public class Recipe {
     private Set<Holiday> holiday;
 
     @JsonProperty("attributes")
-    private void unpackCourseFromNestedObject(Attributes attributes){
+    private void unpackAttributesFromNestedObject(Attributes attributes){
         course = attributes.getCourse();
         cuisine = attributes.getCuisine();
         holiday = attributes.getHoliday();
