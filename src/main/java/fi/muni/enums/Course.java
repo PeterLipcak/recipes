@@ -16,6 +16,8 @@ public enum Course {
     LUNCH_AND_SNACKS,
     @JsonProperty("Lunch")
     LUNCH,
+    @JsonProperty("Sunday Lunch")
+    SUNDAY_LUNCH,
     @JsonProperty("Appetizers")
     APPETIZERS,
     @JsonProperty("Salads")
