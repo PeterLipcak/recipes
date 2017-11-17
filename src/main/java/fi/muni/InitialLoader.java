@@ -1,6 +1,7 @@
 package fi.muni;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.muni.DAO.IRecipeDAO;
@@ -28,15 +29,27 @@ public class InitialLoader implements CommandLineRunner {
             RestTemplate restTemplate = new RestTemplate();
 
             System.out.println("Downloading recipes...");
-            String json = restTemplate.getForObject("http://api.yummly.com/v1/api/recipes?_app_id=668c717d&_app_key=9123fc5b2c2a0742a8aa4ca1ef01bf35&maxResult=10", String.class);
+            String json;
 
-            System.out.println("Mapping recipes to object...");
-            JsonNode arrNode = new ObjectMapper().readTree(json).get("matches");
-            List<Recipe> recipes = new ObjectMapper().readValue(arrNode.toString(), new TypeReference<List<Recipe>>(){});
-            System.out.println("Jackson mapping was successfull!");
-
-            System.out.println("Inserting to database...");
-            recipeDAO.save(recipes);
+            int i = 0;
+            while( i < 60)
+            {
+                try {
+                    System.out.println("Receiving json " + i);
+                    json = restTemplate.getForObject("http://api.yummly.com/v1/api/recipes?_app_id=668c717d&_app_key=9123fc5b2c2a0742a8aa4ca1ef01bf35&maxResult=500&start=" + i*500, String.class);
+                } catch (Exception e)
+                {
+                    continue;
+                }
+                System.out.println("Mapping recipes to object..." + i);
+                JsonNode arrNode = new ObjectMapper().readTree(json).get("matches");
+                List<Recipe> recipes = new ObjectMapper().enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL)
+                        .readValue(arrNode.toString(), new TypeReference<List<Recipe>>(){});
+                System.out.println("Jackson mapping was successful!");
+                System.out.println("Inserting to database...");
+                recipeDAO.save(recipes);
+                i++;
+            }
         }
 
         System.out.println(recipeDAO.findAll().iterator().next());

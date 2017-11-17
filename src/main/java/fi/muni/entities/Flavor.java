@@ -20,9 +20,8 @@ import javax.persistence.*;
 public class Flavor {
 
     @Id
-    @Column(name="FLAVOR_ID")
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Integer flavor_id;
+    private Integer id;
 
     private double piquant;
 
