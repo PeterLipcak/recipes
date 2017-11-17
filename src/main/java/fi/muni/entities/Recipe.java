@@ -30,7 +30,7 @@ public class Recipe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Integer id;
+    private Long id;
 
     @JsonProperty("id")
     private String yummly_id;
