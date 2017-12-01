@@ -29,14 +29,15 @@ import java.util.Set;
 public class Recipe {
 
     @Id
+    @JsonProperty("recipe_id")
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Long id;
+    private Integer id;
 
     @JsonProperty("id")
     private String yummly_id;
 
-    @JsonIgnore
-    private String ImageUrl;
+    //@JsonIgnore
+    private String imageUrl;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "ingredients")
@@ -82,7 +83,7 @@ public class Recipe {
 
     @JsonProperty("imageUrlsBySize")
     private void unpackImageUrlFromNestedObject(Map<String, String> imageUrlsBySize){
-        ImageUrl = imageUrlsBySize.get("90");
+        imageUrl = imageUrlsBySize.get("90");
     }
 
 }

@@ -57,6 +57,6 @@ public class InitialLoader implements CommandLineRunner {
                 i++;
             }
         }
-        System.out.println(recipeDAO.findOne(new Long(2)));
+        //System.out.println(recipeDAO.findOne(2));
     }
 }

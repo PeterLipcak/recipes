@@ -17,6 +17,7 @@
 .recommenders
 .settings
 .springBeans
+/node_modules
 /build
 /code
 MANIFEST.MF
