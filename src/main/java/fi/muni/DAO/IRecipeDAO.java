@@ -16,4 +16,7 @@ public interface IRecipeDAO extends JpaRepository<Recipe, Integer> {
     @Query(value = "select * from recipes limit ?1", nativeQuery = true)
     public List<Recipe> findSpecifiedAmountOfRecipes(int amount);
 
+    @Query(value = "select * from recipes order by rand() limit ?1", nativeQuery = true)
+    public List<Recipe> findRandomRecipes(int amount);
+
 }
