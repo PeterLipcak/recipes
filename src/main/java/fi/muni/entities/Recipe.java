@@ -90,4 +90,8 @@ public class Recipe {
         return id;
     }
 
+    public int getTotalTimeInSeconds(){
+        return totalTimeInSeconds;
+    }
+
 }

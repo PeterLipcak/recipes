@@ -38,14 +38,4 @@ public interface IRecipeDAO extends JpaRepository<Recipe, Integer> {
                     "where id=?1", nativeQuery = true)
     public  List<Object[]> findRecipeIngredients(int id);
 
-//    @Query(value = "select ingredients" +
-//            "from" + "(" +
-//                "select ingredients, count(ingredients) as count " +
-//                "from ingredients " +
-//                "group by ingredients " +
-//                "order by count desc" +
-//            ")" + " t",
-//            nativeQuery = true)
-//    public List<String> findIngredientsCount();
-
 }

@@ -18,19 +18,24 @@ public class RecipeMainPageRecommender {
     @Autowired
     IRecipeDAO recipeDAO;
 
+    private static Map<Recipe, Set<String>> joinTable = new HashMap<>();
     private static Map<String, Float> recipesWeights = new HashMap<>();
     private static Map<Integer, Float> cumulativeTimeDistribution = new HashMap<>();
     private static final int NUMBER_OF_INGREDIENTS = 3559;
     private static final float WEIGHT_OF_INGREDIENTS = 0.8f;
     private static final float WEIGHT_OF_TIME = 0.2f;
-    private static final int PRECISION = 10; // higher number = better result, but more computational time
-    private static final int AMOUNT = 30;
+    private static final int PRECISION = 50; // higher number = better result, but more computational time
+    private static final int AMOUNT = 13083;
+    private static final int AMOUNT_TO_DISPLAY = 48;
 
-    public List<Recipe> recommend() {
-        //compute needed data information
+    public RecipeMainPageRecommender(IRecipeDAO recipeDAO) {
+        this.recipeDAO = recipeDAO;
         calculateWeights();
         timeNeededIndex();
+        findAllRecipes(AMOUNT);
+    }
 
+    public List<Recipe> recommend() {
         Map<Integer, Pair<Integer, Set<String>>> actualRecipesData = new HashMap<>();
         List<Recipe> candidateRecipes;
         List<Recipe> resultRecipes = recipeDAO.findRandomRecipes(1);
@@ -41,15 +46,16 @@ public class RecipeMainPageRecommender {
         int indexLowestSimilarity;
         float tmpSimilarity;
 
-        for (int n = 0; n < AMOUNT -1 ; n++) {
+        for (int n = 0; n < AMOUNT_TO_DISPLAY -1 ; n++) {
             lowestSimilarity = 1;
             indexLowestSimilarity = 0;
-            candidateRecipes = recipeDAO.findRandomRecipes(PRECISION);
+
+            candidateRecipes = getCandidateRecipies(PRECISION);
 
             for (int i = 0; i < PRECISION; i++) {
                 tmpSimilarity = 0;
                 for (Integer j: actualRecipesData.keySet()){
-                    tmpSimilarity += countSimilarity(actualRecipesData.get(j), candidateRecipes.get(i).getId());
+                    tmpSimilarity += countSimilarity(actualRecipesData.get(j), candidateRecipes.get(i));
                 }
                 tmpSimilarity /= actualRecipesData.size();
                 if (tmpSimilarity < lowestSimilarity) {
@@ -63,7 +69,31 @@ public class RecipeMainPageRecommender {
         return resultRecipes;
     }
 
+    private  List<Recipe> getCandidateRecipies(int amount) {
+        List<Recipe> resultList = new ArrayList<>();
+        Random generator = new Random();
+        Recipe[] keys = joinTable.keySet().toArray(new Recipe[amount]);
+        Recipe recipe;
+        for (int i = 0; i < amount; i++){
+            recipe = keys[generator.nextInt(keys.length)];
+            resultList.add(recipe);
+        }
+        return  resultList;
+    }
 
+
+    private void findAllRecipes(int amount){
+        List<Recipe> recipes = recipeDAO.findRandomRecipes(amount);
+        Set<String> ingredientsSet;
+        for (int i=0; i < recipes.size(); i++) {
+            List<Object[]> data = recipeDAO.findRecipeIngredients(recipes.get(i).getId());
+            ingredientsSet = new HashSet<>();
+            for (int j = 0; j < data.size(); j++) {
+                ingredientsSet.add((String)data.get(j)[1]);
+            }
+            joinTable.put(recipes.get(i), ingredientsSet);
+        }
+    }
 
     private void calculateWeights(){
         List<Object[]> tmpIngredients = recipeDAO.findIngredientsCount();
@@ -76,15 +106,11 @@ public class RecipeMainPageRecommender {
         }
     }
 
-    private float countSimilarity(Pair<Integer,Set<String>> data1, int id2) {
-        List<Object[]> recipe2data = recipeDAO.findRecipeIngredients(id2);
+    private float countSimilarity(Pair<Integer,Set<String>> data1, Recipe recipe2) {
+        Set<String> ingredients2 = joinTable.get(recipe2);
 
-        Set<String> ingredients2 = new HashSet<>();
-        for (int i=0; i < recipe2data.size(); i++){
-            ingredients2.add((String)recipe2data.get(i)[1]);
-        }
         float jIndex = calculateIndex(data1.getValue(), ingredients2);
-        float timeNeeded = (float)Math.abs(cumulativeTimeDistribution.get(data1.getKey()) - cumulativeTimeDistribution.get(recipe2data.get(0)[2]));
+        float timeNeeded = (float)Math.abs(cumulativeTimeDistribution.get(data1.getKey()) - cumulativeTimeDistribution.get(recipe2.getTotalTimeInSeconds()));
         return WEIGHT_OF_INGREDIENTS * jIndex + WEIGHT_OF_TIME * timeNeeded;
     }
 
