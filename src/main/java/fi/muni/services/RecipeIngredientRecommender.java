@@ -1,25 +1,55 @@
 package fi.muni.services;
 
-import com.google.common.collect.Lists;
 import fi.muni.DAO.IRecipeDAO;
-import fi.muni.DTOs.RecipeDTO;
 import fi.muni.entities.Recipe;
-import org.springframework.beans.factory.annotation.Autowired;
+import javafx.util.Pair;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by peter on 30.11.17.
  */
 @Service
-public class RecipeIngredientRecommender implements IRecipeRecommender {
+public class RecipeIngredientRecommender extends IngredientsRecommender implements IRecipeRecommender {
 
-    @Autowired
-    IRecipeDAO recipeDAO;
+    private static final int PRECISION = 400; // higher number = better result, but more computational time
+    private static final int AMOUNT_TO_DISPLAY = 8;
 
-    @Override
+    public RecipeIngredientRecommender(IRecipeDAO recipeDAO) {
+        super(recipeDAO);
+    }
+
     public List<Recipe> recommend(Integer id) {
-        return Lists.newArrayList(recipeDAO.findSpecifiedAmountOfRecipes(8));
+        Map<Integer, Pair<Integer, Set<String>>> actualRecipesData = new HashMap<>();
+        List<Recipe> candidateRecipes;
+        Recipe r = recipeDAO.getOne(id);
+        List<Recipe> resultRecipes = new ArrayList<>();
+        resultRecipes.add(r);
+
+        actualRecipesData.put(id, dataToInsert(id));
+
+        float highestSimilarity;
+        int indexHighestSimilarity;
+        float tmpSimilarity;
+
+        for (int n = 0; n < AMOUNT_TO_DISPLAY; n++) {
+            highestSimilarity = 0;
+            indexHighestSimilarity = 0;
+
+            candidateRecipes = getCandidateRecipies(PRECISION);
+
+            for (int i = 0; i < PRECISION; i++) {
+                tmpSimilarity = countSimilarity(actualRecipesData.get(id), candidateRecipes.get(i));
+                if (tmpSimilarity > 0.99f) continue;
+                if (tmpSimilarity > highestSimilarity) {
+                    highestSimilarity = tmpSimilarity;
+                    indexHighestSimilarity = i;
+                }
+            }
+            actualRecipesData.put(candidateRecipes.get(indexHighestSimilarity).getId(), dataToInsert(candidateRecipes.get(indexHighestSimilarity).getId()));
+            resultRecipes.add(candidateRecipes.get(indexHighestSimilarity));
+        }
+        return resultRecipes;
     }
 }
