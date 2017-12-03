@@ -86,4 +86,8 @@ public class Recipe {
         imageUrl = imageUrlsBySize.get("90");
     }
 
+    public Integer getId(){
+        return id;
+    }
+
 }
