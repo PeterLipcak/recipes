@@ -23,9 +23,9 @@ public class RecipeIngredientRecommender extends IngredientsRecommender implemen
     public List<Recipe> recommend(Integer id) {
         Map<Integer, Pair<Integer, Set<String>>> actualRecipesData = new HashMap<>();
         List<Recipe> candidateRecipes;
-        Recipe r = recipeDAO.getOne(id);
-        List<Recipe> resultRecipes = new ArrayList<>();
-        resultRecipes.add(r);
+        //Recipe r = recipeDAO.getOne(id);
+        Set<Recipe> resultRecipes = new HashSet<>();
+        List result = new ArrayList();
 
         actualRecipesData.put(id, dataToInsert(id));
 
@@ -40,6 +40,7 @@ public class RecipeIngredientRecommender extends IngredientsRecommender implemen
             candidateRecipes = getCandidateRecipies(PRECISION);
 
             for (int i = 0; i < PRECISION; i++) {
+                if (resultRecipes.contains(candidateRecipes.get(i))) continue;
                 tmpSimilarity = countSimilarity(actualRecipesData.get(id), candidateRecipes.get(i));
                 if (tmpSimilarity > 0.99f) continue;
                 if (tmpSimilarity > highestSimilarity) {
@@ -50,6 +51,7 @@ public class RecipeIngredientRecommender extends IngredientsRecommender implemen
             actualRecipesData.put(candidateRecipes.get(indexHighestSimilarity).getId(), dataToInsert(candidateRecipes.get(indexHighestSimilarity).getId()));
             resultRecipes.add(candidateRecipes.get(indexHighestSimilarity));
         }
-        return resultRecipes;
+        result.addAll(resultRecipes);
+        return result;
     }
 }
