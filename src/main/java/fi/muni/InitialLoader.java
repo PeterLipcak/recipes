@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.muni.DAO.IRecipeDAO;
 import fi.muni.entities.Recipe;
+import fi.muni.services.IRecipeRecommender;
+import fi.muni.services.RecipeMainPageRecommender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

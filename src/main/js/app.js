@@ -19,7 +19,7 @@ class App extends React.Component {
     componentDidMount() {
         client({method: 'GET', path: '/api/main/recipes/'}).done(response => {
             this.setState({recipes: response.entity});
-        });
+    });
     }
 
     render() {
@@ -34,12 +34,12 @@ class RecipeList extends React.Component{
     render() {
         var recipes = this.props.recipes.map(recipe =>
             <Recipe key={recipe.recipe_id} recipe={recipe}/>
-        );
+    );
         return (
             <div className="container-full">
-                <div className="row row-no-padding">
-                    {recipes}
-                </div>
+            <div className="row row-no-padding">
+            {recipes}
+            </div>
             </div>
     )
     }
@@ -64,7 +64,7 @@ class Recipe extends React.Component{
             console.log(detailPath);
             client({method: 'GET', path: detailPath}).done(response => {
                 this.setState({recipeDetail: response.entity});
-            });
+        });
         }
     }
 
@@ -85,30 +85,30 @@ class Recipe extends React.Component{
         var recipeImage = <img className="img-responsive" src={`${this.props.recipe.imageUrl.replace("=s90-c","=s320-c")}`}/>;
         return (
             <div className="col-xs-6 col-sm-4 col-md-3 col-lg-2 offset-0">
-                <a onClick={this.open}>
-                    <div className="carousel slide" data-ride="carousel">
-                        <div className="carousel-inner">
-                            <div className="item active image">
-                                {recipeImage}
-                                <div className="carousel-caption">
-                                    <strong>{this.props.recipe.recipeName}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-                <Modal show={this.state.showModal} bsSize="large" onHide={this.close}>
-                    <Modal.Header closeButton>
-                        <Modal.Title><strong>{this.props.recipe.recipeName}</strong></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <RecipeDetail key={this.state.recipeDetail.id} recipeDetail={this.state.recipeDetail}  recipeImage={recipeImage}/>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button onClick={this.close}>Close</Button>
-                    </Modal.Footer>
-                </Modal>
-            </div>
+            <a onClick={this.open}>
+    <div className="carousel slide" data-ride="carousel">
+            <div className="carousel-inner">
+            <div className="item active image">
+            {recipeImage}
+            <div className="carousel-caption">
+            <strong>{this.props.recipe.recipeName}</strong>
+        </div>
+        </div>
+        </div>
+        </div>
+        </a>
+        <Modal show={this.state.showModal} bsSize="large" onHide={this.close}>
+    <Modal.Header closeButton>
+        <Modal.Title><strong>{this.props.recipe.recipeName}</strong></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <RecipeDetail key={this.state.recipeDetail.id} recipeDetail={this.state.recipeDetail}  recipeImage={recipeImage}/>
+        </Modal.Body>
+        <Modal.Footer>
+        <Button onClick={this.close}>Close</Button>
+        </Modal.Footer>
+        </Modal>
+        </div>
     )
     }
 }
@@ -122,13 +122,13 @@ class RecipeDetail extends React.Component{
             console.log("recipeDetail is undefined");
             return(
                 <div className="container-fluid">
-                    <div className="row">
-                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <ReactLoading id="spinningBubbles" type="spinningBubbles" color="#444"/>
-                         </div>
-                    </div>
+                <div className="row">
+                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <ReactLoading id="spinningBubbles" type="spinningBubbles" color="#444"/>
                 </div>
-            )
+                </div>
+                </div>
+        )
         } else {
             console.log("recipeDetail is defined");
             var ingredients = Array.from( new Set( this.props.recipeDetail.ingredientLines ) );
@@ -138,12 +138,12 @@ class RecipeDetail extends React.Component{
             }
 
             var recommendedRecipesIngredients = this.props.recipeDetail.recommendedBasedOnIngredients.map(recipe =>
-                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe}/>
-            );
+                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe} recommederType="ingredients"/>
+        );
 
             var recommendedRecipesFlavors = this.props.recipeDetail.recommendedBasedOnFlavors.map(recipe =>
-                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe}/>
-            );
+                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe} recommederType="flavors"/>
+        );
 
             var prepTime = []
             var cookingTime = [];
@@ -162,55 +162,55 @@ class RecipeDetail extends React.Component{
 
             return (
                 <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                            {this.props.recipeImage}
-                        </div>
-                        <div className="col-lg-8 col-md-8 col-sm-6 col-xs-12">
-                            <h4><strong>Ingredients:</strong></h4>
-                            <ul>
-                                {ingredientLines}
-                            </ul>
-                            <h4><strong>Preparation time:</strong></h4>
-                            <ul>
-                                <li>
-                                    {prepTime}
-                                </li>
-                            </ul>
-                            <h4><strong>Cooking time:</strong></h4>
-                            <ul>
-                                <li>
-                                    {cookingTime}
-                                </li>
-                            </ul>
-                            <h4><strong>Source of the recipe:</strong></h4>
-                            <ul>
-                                <li>
-                                    <a href={this.props.recipeDetail.sourceRecipe}>{this.props.recipeDetail.sourceRecipe}</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div className="row top-buffer">
-                                <br/>
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <hr/>
-                                    <h4><strong>Recommended based on ingredients:</strong></h4>
-                                </div>
-                                <br/>
-                                {recommendedRecipesIngredients}
-                                <br/>
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <hr/>
-                                    <h4><strong>Recommended based on flavors:</strong></h4>
-                                </div>
-                                <br/>
-                                {recommendedRecipesFlavors}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )
+                <div className="row">
+                <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                {this.props.recipeImage}
+        </div>
+            <div className="col-lg-8 col-md-8 col-sm-6 col-xs-12">
+                <h4><strong>Ingredients:</strong></h4>
+            <ul>
+            {ingredientLines}
+            </ul>
+            <h4><strong>Preparation time:</strong></h4>
+            <ul>
+            <li>
+            {prepTime}
+            </li>
+            </ul>
+            <h4><strong>Cooking time:</strong></h4>
+            <ul>
+            <li>
+            {cookingTime}
+            </li>
+            </ul>
+            <h4><strong>Source of the recipe:</strong></h4>
+            <ul>
+            <li>
+            <a href={this.props.recipeDetail.sourceRecipe}>{this.props.recipeDetail.sourceRecipe}</a>
+            </li>
+            </ul>
+            </div>
+            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div className="row top-buffer">
+                <br/>
+                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <hr/>
+                <h4><strong>Recommended based on ingredients:</strong></h4>
+            </div>
+            <br/>
+            {recommendedRecipesIngredients}
+            <br/>
+            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <hr/>
+                <h4><strong>Recommended based on flavors:</strong></h4>
+            </div>
+            <br/>
+            {recommendedRecipesFlavors}
+            </div>
+            </div>
+            </div>
+            </div>
+        )
         }
     }
 }
@@ -229,11 +229,11 @@ class RecommendedRecipe extends React.Component{
         if(!this.state.alreadyLoaded && this.state.showModal){
             console.log('I was triggered during componentDidUpdate:  showModal:' + this.state.showModal + '  alreadyLoaded:' + this.state.alreadyLoaded);
             this.setState({ alreadyLoaded: true });
-            let detailPath = "/api/recipe/recommended/" + this.props.recipe.id;
+            let detailPath = "/api/recipe/recommended/" + this.props.recipe.id + "?recommenderType=" + this.props.recommederType;
             console.log(detailPath);
             client({method: 'GET', path: detailPath}).done(response => {
                 this.setState({recipeDetail: response.entity});
-            });
+        });
         }
     }
 
@@ -255,31 +255,31 @@ class RecommendedRecipe extends React.Component{
         var recipeImage = <img id="roundedImg" className="img-responsive" src={`${this.props.recipe.imageUrl.replace("=s90-c","=s320-c")}`}/>;
         return (
             <div className="col-xs-6 col-sm-4 col-md-3 col-lg-3 offset-0">
-                <a onClick={this.open}>
-                    <div className="carousel slide" data-ride="carousel">
-                        <div className="carousel-inner">
-                            <div className="item active image">
-                                {recipeImage}
-                                <div className="carousel-caption">
-                                    <strong>{this.props.recipe.recipeName}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-                <Modal show={this.state.showModal} bsSize="large" onHide={this.close}>
-                    <Modal.Header closeButton>
-                        <Modal.Title><strong>{this.props.recipe.recipeName}</strong></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <RecommendedRecipeDetail key={this.state.recipeDetail.id} recipeDetail={this.state.recipeDetail}  recipeImage={recipeImage}/>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button onClick={this.close}>Close</Button>
-                    </Modal.Footer>
-                </Modal>
-            </div>
-        )
+            <a onClick={this.open}>
+    <div className="carousel slide" data-ride="carousel">
+            <div className="carousel-inner">
+            <div className="item active image">
+            {recipeImage}
+            <div className="carousel-caption">
+            <strong>{this.props.recipe.recipeName}</strong>
+        </div>
+        </div>
+        </div>
+        </div>
+        </a>
+        <Modal show={this.state.showModal} bsSize="large" onHide={this.close}>
+    <Modal.Header closeButton>
+        <Modal.Title><strong>{this.props.recipe.recipeName}</strong></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <RecommendedRecipeDetail key={this.state.recipeDetail.id} recipeDetail={this.state.recipeDetail}  recipeImage={recipeImage}/>
+        </Modal.Body>
+        <Modal.Footer>
+        <Button onClick={this.close}>Close</Button>
+        </Modal.Footer>
+        </Modal>
+        </div>
+    )
     }
 }
 
@@ -293,13 +293,13 @@ class RecommendedRecipeDetail extends React.Component{
             console.log("recipeDetail is undefined");
             return(
                 <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <ReactLoading id="spinningBubbles" type="spinningBubbles" color="#444"/>
-                        </div>
-                    </div>
+                <div className="row">
+                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <ReactLoading id="spinningBubbles" type="spinningBubbles" color="#444"/>
                 </div>
-            )
+                </div>
+                </div>
+        )
         } else {
             console.log("recipeDetail is defined");
             var ingredients = Array.from( new Set( this.props.recipeDetail.ingredientLines ) );
@@ -325,43 +325,43 @@ class RecommendedRecipeDetail extends React.Component{
 
             return (
                 <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                            {this.props.recipeImage}
-                        </div>
-                        <div className="col-lg-8 col-md-8 col-sm-6 col-xs-12">
-                            <h4><strong>Ingredients:</strong></h4>
-                            <ul>
-                                {ingredientLines}
-                            </ul>
-                            <h4><strong>Preparation time:</strong></h4>
-                            <ul>
-                                <li>
-                                    {prepTime}
-                                </li>
-                            </ul>
-                            <h4><strong>Cooking time:</strong></h4>
-                            <ul>
-                                <li>
-                                    {cookingTime}
-                                </li>
-                            </ul>
-                            <h4><strong>Source of the recipe:</strong></h4>
-                            <ul>
-                                <li>
-                                    <a href={this.props.recipeDetail.sourceRecipe}>{this.props.recipeDetail.sourceRecipe}</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            )
+                <div className="row">
+                <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                {this.props.recipeImage}
+        </div>
+            <div className="col-lg-8 col-md-8 col-sm-6 col-xs-12">
+                <h4><strong>Ingredients:</strong></h4>
+            <ul>
+            {ingredientLines}
+            </ul>
+            <h4><strong>Preparation time:</strong></h4>
+            <ul>
+            <li>
+            {prepTime}
+            </li>
+            </ul>
+            <h4><strong>Cooking time:</strong></h4>
+            <ul>
+            <li>
+            {cookingTime}
+            </li>
+            </ul>
+            <h4><strong>Source of the recipe:</strong></h4>
+            <ul>
+            <li>
+            <a href={this.props.recipeDetail.sourceRecipe}>{this.props.recipeDetail.sourceRecipe}</a>
+            </li>
+            </ul>
+            </div>
+            </div>
+            </div>
+        )
         }
     }
 }
 
 
 ReactDOM.render(
-    <App />,
+<App />,
     document.getElementById('react')
 )
