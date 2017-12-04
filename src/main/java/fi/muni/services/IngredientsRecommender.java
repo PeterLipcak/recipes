@@ -2,11 +2,14 @@ package fi.muni.services;
 
 import fi.muni.DAO.IRecipeDAO;
 import fi.muni.entities.Recipe;
-import javafx.util.Pair;
+//import javafx.util.Pair;
+import org.springframework.data.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigInteger;
 import java.util.*;
+
+import static org.springframework.data.util.Pair.of;
 
 public abstract class IngredientsRecommender{
 
@@ -66,8 +69,8 @@ public abstract class IngredientsRecommender{
     float countSimilarity(Pair<Integer, Set<String>> data1, Recipe recipe2) {
     Set<String> ingredients2 = joinTable.get(recipe2);
 
-    float jIndex = calculateIndex(data1.getValue(), ingredients2);
-    float timeNeeded = (float)Math.abs(cumulativeTimeDistribution.get(data1.getKey()) - cumulativeTimeDistribution.get(recipe2.getTotalTimeInSeconds()));
+    float jIndex = calculateIndex(data1.getSecond(), ingredients2);
+    float timeNeeded = (float)Math.abs(cumulativeTimeDistribution.get(data1.getFirst()) - cumulativeTimeDistribution.get(recipe2.getTotalTimeInSeconds()));
     return WEIGHT_OF_INGREDIENTS * jIndex + WEIGHT_OF_TIME * timeNeeded;
     }
 
@@ -78,8 +81,8 @@ public abstract class IngredientsRecommender{
         for (int i=0; i < data.size(); i++){
             resultSet.add((String)data.get(i)[1]);
         }
-        int b = (Integer)data.get(0)[2];
-        return new Pair<>((Integer)data.get(0)[2], resultSet);
+        //int b = (Integer)data.get(0)[2];
+        return of((Integer)data.get(0)[2], resultSet);
     }
 
     // Jaccard index

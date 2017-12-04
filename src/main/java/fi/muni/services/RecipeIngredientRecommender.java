@@ -2,7 +2,8 @@ package fi.muni.services;
 
 import fi.muni.DAO.IRecipeDAO;
 import fi.muni.entities.Recipe;
-import javafx.util.Pair;
+//import javafx.util.Pair;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
