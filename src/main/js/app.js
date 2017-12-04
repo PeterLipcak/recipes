@@ -138,11 +138,11 @@ class RecipeDetail extends React.Component{
             }
 
             var recommendedRecipesIngredients = this.props.recipeDetail.recommendedBasedOnIngredients.map(recipe =>
-                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe}/>
+                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe} recommederType="ingredients"/>
             );
 
             var recommendedRecipesFlavors = this.props.recipeDetail.recommendedBasedOnFlavors.map(recipe =>
-                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe}/>
+                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe} recommederType="flavors"/>
             );
 
             var prepTime = []
@@ -229,7 +229,7 @@ class RecommendedRecipe extends React.Component{
         if(!this.state.alreadyLoaded && this.state.showModal){
             console.log('I was triggered during componentDidUpdate:  showModal:' + this.state.showModal + '  alreadyLoaded:' + this.state.alreadyLoaded);
             this.setState({ alreadyLoaded: true });
-            let detailPath = "/api/recipe/recommended/" + this.props.recipe.id;
+            let detailPath = "/api/recipe/recommended/" + this.props.recipe.id + "?recommenderType=" + this.props.recommederType;
             console.log(detailPath);
             client({method: 'GET', path: detailPath}).done(response => {
                 this.setState({recipeDetail: response.entity});

@@ -287,11 +287,11 @@
 	                }
 	
 	                var recommendedRecipesIngredients = this.props.recipeDetail.recommendedBasedOnIngredients.map(function (recipe) {
-	                    return React.createElement(RecommendedRecipe, { key: recipe.recipe_id, recipe: recipe });
+	                    return React.createElement(RecommendedRecipe, { key: recipe.recipe_id, recipe: recipe, recommederType: 'ingredients' });
 	                });
 	
 	                var recommendedRecipesFlavors = this.props.recipeDetail.recommendedBasedOnFlavors.map(function (recipe) {
-	                    return React.createElement(RecommendedRecipe, { key: recipe.recipe_id, recipe: recipe });
+	                    return React.createElement(RecommendedRecipe, { key: recipe.recipe_id, recipe: recipe, recommederType: 'flavors' });
 	                });
 	
 	                var prepTime = [];
@@ -470,7 +470,7 @@
 	            if (!this.state.alreadyLoaded && this.state.showModal) {
 	                console.log('I was triggered during componentDidUpdate:  showModal:' + this.state.showModal + '  alreadyLoaded:' + this.state.alreadyLoaded);
 	                this.setState({ alreadyLoaded: true });
-	                var detailPath = "/api/recipe/recommended/" + this.props.recipe.id;
+	                var detailPath = "/api/recipe/recommended/" + this.props.recipe.id + "?recommenderType=" + this.props.recommederType;
 	                console.log(detailPath);
 	                client({ method: 'GET', path: detailPath }).done(function (response) {
 	                    _this8.setState({ recipeDetail: response.entity });

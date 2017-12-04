@@ -1,13 +1,14 @@
 package fi.muni.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.muni.DAO.IClickLoggerDAO;
 import fi.muni.DTOs.RecipeDetailDTO;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import fi.muni.entities.ClickLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -17,8 +18,22 @@ import java.io.IOException;
 @RestController
 public class RecommendedRecipeDetailController {
 
+    @Autowired
+    private IClickLoggerDAO clickLoggerDAO;
+
     @RequestMapping(method = RequestMethod.GET)
-    public String readRecipeDetail(@PathVariable String recipeId) {
+    public String readRecipeDetail(@PathVariable String recipeId, @RequestParam String recommenderType, HttpServletRequest request) {
+
+        System.out.println(recommenderType);
+        System.out.println(request.getRemoteAddr());
+
+        ClickLogger clickLogger = ClickLogger.builder()
+                .ipAddress(request.getRemoteAddr())
+                .recommenderType(recommenderType)
+                .build();
+
+        clickLoggerDAO.save(clickLogger);
+
         RestTemplate restTemplate = new RestTemplate();
         /*try {
             Thread.sleep(5000);
