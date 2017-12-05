@@ -7,6 +7,8 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by peter on 30.11.17.
@@ -14,7 +16,6 @@ import java.util.*;
 @Service
 public class RecipeIngredientRecommender extends IngredientsRecommender implements IRecipeRecommender {
 
-    private static final int PRECISION = 400; // higher number = better result, but more computational time
     private static final int AMOUNT_TO_DISPLAY = 8;
 
     public RecipeIngredientRecommender(IRecipeDAO recipeDAO) {
@@ -22,37 +23,31 @@ public class RecipeIngredientRecommender extends IngredientsRecommender implemen
     }
 
     public List<Recipe> recommend(Integer id) {
-        Map<Integer, Pair<Integer, Set<String>>> actualRecipesData = new HashMap<>();
-        List<Recipe> candidateRecipes;
-        //Recipe r = recipeDAO.getOne(id);
-        Set<Recipe> resultRecipes = new HashSet<>();
-        List result = new ArrayList();
+        Map<Integer, Pair<Integer, Set<String>>> initialRecipeData = new HashMap<>();
+        initialRecipeData.put(id, dataToInsert(id));
+        List<Recipe> result = new ArrayList<>();
 
-        actualRecipesData.put(id, dataToInsert(id));
+        Map<Recipe, Float> recipesSimilarity = new HashMap<>();
 
-        float highestSimilarity;
-        int indexHighestSimilarity;
-        float tmpSimilarity;
-
-        for (int n = 0; n < AMOUNT_TO_DISPLAY; n++) {
-            highestSimilarity = 0;
-            indexHighestSimilarity = 0;
-
-            candidateRecipes = getCandidateRecipies(PRECISION);
-
-            for (int i = 0; i < PRECISION; i++) {
-                if (resultRecipes.contains(candidateRecipes.get(i))) continue;
-                tmpSimilarity = countSimilarity(actualRecipesData.get(id), candidateRecipes.get(i));
-                if (tmpSimilarity > 0.99f) continue;
-                if (tmpSimilarity > highestSimilarity) {
-                    highestSimilarity = tmpSimilarity;
-                    indexHighestSimilarity = i;
-                }
-            }
-            actualRecipesData.put(candidateRecipes.get(indexHighestSimilarity).getId(), dataToInsert(candidateRecipes.get(indexHighestSimilarity).getId()));
-            resultRecipes.add(candidateRecipes.get(indexHighestSimilarity));
+        for(Recipe recipe: joinTable.keySet()){
+            if (recipe.getId() == id) continue;
+            else recipesSimilarity.put(recipe, countSimilarity(initialRecipeData.get(id), recipe));
         }
-        result.addAll(resultRecipes);
-        return result;
+
+        Set<Map.Entry<Recipe, Float>> set = recipesSimilarity.entrySet();
+        List<Map.Entry<Recipe, Float>> list = new ArrayList<>(set);
+        Collections.sort( list, new Comparator<Map.Entry<Recipe, Float>>()
+        {
+            public int compare( Map.Entry<Recipe, Float> o1, Map.Entry<Recipe, Float> o2 )
+            {
+                return (o2.getValue()).compareTo( o1.getValue() );
+            }
+        } );
+
+        for (int n = 2; n < AMOUNT_TO_DISPLAY*2 + 2; n++) {
+            result.add(list.get(n).getKey());
+        }
+
+        return  result;
     }
 }

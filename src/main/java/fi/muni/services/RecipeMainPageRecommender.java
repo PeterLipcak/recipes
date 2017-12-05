@@ -13,8 +13,8 @@ import java.util.*;
 @Service
 public class RecipeMainPageRecommender extends IngredientsRecommender{
 
-    private static final int AMOUNT_TO_DISPLAY = 48;
-    private static final int PRECISION =100;
+    private static final int AMOUNT_TO_DISPLAY = 100;
+    private static final int PRECISION =20;
 
     public RecipeMainPageRecommender(IRecipeDAO recipeDAO) {
         super(recipeDAO);

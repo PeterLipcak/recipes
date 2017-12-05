@@ -15,7 +15,7 @@ public abstract class IngredientsRecommender{
 
     @Autowired
     IRecipeDAO recipeDAO;
-    private static Map<Recipe, Set<String>> joinTable = new HashMap<>();
+    protected static Map<Recipe, Set<String>> joinTable = new HashMap<>();
     private static Map<String, Float> recipesWeights = new HashMap<>();
     private static Map<Integer, Float> cumulativeTimeDistribution = new HashMap<>();
     private static final int NUMBER_OF_INGREDIENTS = 3559;
