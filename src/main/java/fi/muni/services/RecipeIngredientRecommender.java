@@ -3,6 +3,7 @@ package fi.muni.services;
 import fi.muni.DAO.IRecipeDAO;
 import fi.muni.entities.Recipe;
 //import javafx.util.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +19,13 @@ public class RecipeIngredientRecommender extends IngredientsRecommender implemen
 
     private static final int AMOUNT_TO_DISPLAY = 8;
 
+    @Autowired
     public RecipeIngredientRecommender(IRecipeDAO recipeDAO) {
         super(recipeDAO);
     }
 
     public List<Recipe> recommend(Integer id) {
+        long startTime = System.currentTimeMillis();
         Map<Integer, Pair<Integer, Set<String>>> initialRecipeData = new HashMap<>();
         initialRecipeData.put(id, dataToInsert(id));
         List<Recipe> result = new ArrayList<>();
@@ -47,7 +50,9 @@ public class RecipeIngredientRecommender extends IngredientsRecommender implemen
         for (int n = 2; n < AMOUNT_TO_DISPLAY*2 + 2; n++) {
             result.add(list.get(n).getKey());
         }
-
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("RecipeIngredientRecommender -> " + elapsedTime);
         return  result;
     }
 }

@@ -3,7 +3,6 @@ package fi.muni.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import fi.muni.enums.Course;
 import fi.muni.enums.Cuisine;
 import fi.muni.enums.Holiday;
@@ -71,6 +70,7 @@ public class Recipe {
     @Enumerated(EnumType.STRING)
     private Set<Holiday> holiday;
 
+
     @JsonProperty("attributes")
     private void unpackAttributesFromNestedObject(Attributes attributes){
         course = attributes.getCourse();
@@ -84,14 +84,6 @@ public class Recipe {
     @JsonProperty("imageUrlsBySize")
     private void unpackImageUrlFromNestedObject(Map<String, String> imageUrlsBySize){
         imageUrl = imageUrlsBySize.get("90");
-    }
-
-    public Integer getId(){
-        return id;
-    }
-
-    public int getTotalTimeInSeconds(){
-        return totalTimeInSeconds;
     }
 
 }

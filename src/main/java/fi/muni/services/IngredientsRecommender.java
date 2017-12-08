@@ -21,13 +21,12 @@ public abstract class IngredientsRecommender{
     private static final int NUMBER_OF_INGREDIENTS = 3559;
     private static final float WEIGHT_OF_INGREDIENTS = 0.8f;
     private static final float WEIGHT_OF_TIME = 0.2f;
-    private static final int AMOUNT = 13083;
 
     public IngredientsRecommender(IRecipeDAO recipeDAO) {
         this.recipeDAO = recipeDAO;
         calculateWeights();
         timeNeededIndex();
-        findAllRecipes(AMOUNT);
+        findAllRecipes();
     }
 
     List<Recipe> getCandidateRecipies(int amount) {
@@ -42,16 +41,16 @@ public abstract class IngredientsRecommender{
         return  resultList;
     }
 
-    private void findAllRecipes(int amount){
-        List<Recipe> recipes = recipeDAO.findRandomRecipes(amount);
+    private void findAllRecipes(){
+        List<Recipe> recipes = recipeDAO.findAll();
         Set<String> ingredientsSet;
-        for (int i=0; i < recipes.size(); i++) {
-            List<Object[]> data = recipeDAO.findRecipeIngredients(recipes.get(i).getId());
+        for (Recipe r : recipes) {
+            List<Object[]> data = recipeDAO.findRecipeIngredients(r.getId());
             ingredientsSet = new HashSet<>();
             for (int j = 0; j < data.size(); j++) {
                 ingredientsSet.add((String)data.get(j)[1]);
             }
-            joinTable.put(recipes.get(i), ingredientsSet);
+            joinTable.put(r, ingredientsSet);
         }
     }
 
