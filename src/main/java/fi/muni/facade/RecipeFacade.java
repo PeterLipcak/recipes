@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by peter on 30.11.17.
@@ -33,8 +34,8 @@ public class RecipeFacade {
         return transformToDTO(recipeIngredientRecommender.recommend(id));
     }
 
-    public List<RecipeDTO> getRecipesRecommendedBasedOnFlavor(Integer id){
-        return transformToDTO(recipeFlavorRecommender.recommend(id));
+    public List<RecipeDTO> getRecipesRecommendedBasedOnFlavor(Integer id, Set<Integer> ingredientRecipesIDs){
+        return transformToDTO(recipeFlavorRecommender.recommend(id, ingredientRecipesIDs));
     }
 
     public List<RecipeDTO> getRecipesMainPage(){

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import fi.muni.DTOs.RecipeDTO;
 import fi.muni.DTOs.RecipeDetailDTO;
 import fi.muni.entities.Recipe;
 import fi.muni.facade.RecipeFacade;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by peter on 26.11.17.
@@ -40,8 +44,15 @@ public class RecipeDetailController {
         try {
 
             recipeDetailDTO = mapper.readValue(recipeDetail, RecipeDetailDTO.class);
-            recipeDetailDTO.setRecommendedBasedOnIngredients(recipeFacade.getRecipesRecommendedBasedOnIngredient(id));
-            recipeDetailDTO.setRecommendedBasedOnFlavors(recipeFacade.getRecipesRecommendedBasedOnFlavor(id));
+            List<RecipeDTO> recipeIngredientDTOs= recipeFacade.getRecipesRecommendedBasedOnIngredient(id);
+            recipeDetailDTO.setRecommendedBasedOnIngredients(recipeIngredientDTOs);
+
+            Set<Integer> ingredientRecipesIDs = new HashSet<>();
+            for (RecipeDTO recipeDTO : recipeIngredientDTOs){
+                ingredientRecipesIDs.add(recipeDTO.getId());
+            }
+
+            recipeDetailDTO.setRecommendedBasedOnFlavors(recipeFacade.getRecipesRecommendedBasedOnFlavor(id,ingredientRecipesIDs));
             System.out.println(mapper.writeValueAsString(recipeDetailDTO));
             result = mapper.writeValueAsString(recipeDetailDTO);
         } catch (IOException e) {

@@ -138,12 +138,13 @@ class RecipeDetail extends React.Component{
             }
 
             var recommendedRecipesIngredients = this.props.recipeDetail.recommendedBasedOnIngredients.map(recipe =>
-                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe} recommederType="ingredients"/>
+                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe} recommederType="ingredients" parentRecipeId={this.props.key}/>
             );
 
             var recommendedRecipesFlavors = this.props.recipeDetail.recommendedBasedOnFlavors.map(recipe =>
-                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe} recommederType="flavors"/>
+                <RecommendedRecipe key={recipe.recipe_id} recipe={recipe} recommederType="flavors" parentRecipeId={this.props.key}/>
             );
+
 
             var prepTime = []
             var cookingTime = [];
@@ -186,7 +187,7 @@ class RecipeDetail extends React.Component{
                             <h4><strong>Source of the recipe:</strong></h4>
                             <ul>
                                 <li>
-                                    <a href={this.props.recipeDetail.sourceRecipe}>{this.props.recipeDetail.sourceRecipe}</a>
+                                    <a id="breakText" href={this.props.recipeDetail.sourceRecipe}>{this.props.recipeDetail.sourceRecipe}</a>
                                 </li>
                             </ul>
                         </div>
@@ -194,17 +195,11 @@ class RecipeDetail extends React.Component{
                             <div className="row top-buffer">
                                 <br/>
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <h4><strong>Recommended recipes:</strong></h4>
                                     <hr/>
-                                    <h4><strong>Recommended based on ingredients:</strong></h4>
                                 </div>
                                 <br/>
                                 {recommendedRecipesIngredients}
-                                <br/>
-                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <hr/>
-                                    <h4><strong>Recommended based on flavors:</strong></h4>
-                                </div>
-                                <br/>
                                 {recommendedRecipesFlavors}
                             </div>
                         </div>
@@ -229,7 +224,7 @@ class RecommendedRecipe extends React.Component{
         if(!this.state.alreadyLoaded && this.state.showModal){
             console.log('I was triggered during componentDidUpdate:  showModal:' + this.state.showModal + '  alreadyLoaded:' + this.state.alreadyLoaded);
             this.setState({ alreadyLoaded: true });
-            let detailPath = "/api/recipe/recommended/" + this.props.recipe.id + "?recommenderType=" + this.props.recommederType;
+            let detailPath = "/api/recipe/recommended/" + this.props.recipe.id + "?recommenderType=" + this.props.recommederType + "&parentRecipeId=" + this.props.parentRecipeId;
             console.log(detailPath);
             client({method: 'GET', path: detailPath}).done(response => {
                 this.setState({recipeDetail: response.entity});

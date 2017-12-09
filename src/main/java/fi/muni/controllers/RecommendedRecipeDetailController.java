@@ -22,10 +22,12 @@ public class RecommendedRecipeDetailController {
     private IClickLoggerDAO clickLoggerDAO;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String readRecipeDetail(@PathVariable String recipeId, @RequestParam String recommenderType, HttpServletRequest request) {
+    public String readRecipeDetail(@PathVariable String recipeId, @RequestParam String recommenderType, @RequestParam String parentRecipeId, HttpServletRequest request) {
 
         System.out.println(recommenderType);
         System.out.println(request.getRemoteAddr());
+        System.out.println(recipeId);
+        System.out.println(parentRecipeId);
 
         ClickLogger clickLogger = ClickLogger.builder()
                 .ipAddress(request.getRemoteAddr())

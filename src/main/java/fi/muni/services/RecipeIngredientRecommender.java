@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
  * Created by peter on 30.11.17.
  */
 @Service
-public class RecipeIngredientRecommender extends IngredientsRecommender implements IRecipeRecommender {
+public class RecipeIngredientRecommender extends IngredientsRecommender {
 
-    private static final int AMOUNT_TO_DISPLAY = 8;
+    private static final int AMOUNT_TO_DISPLAY = 4;
 
     @Autowired
     public RecipeIngredientRecommender(IRecipeDAO recipeDAO) {

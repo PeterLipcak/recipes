@@ -257,6 +257,8 @@
 	    _createClass(RecipeDetail, [{
 	        key: 'render',
 	        value: function render() {
+	            var _this7 = this;
+	
 	            var ingredientLines = [];
 	
 	            if (this.props.recipeDetail === undefined || this.props.recipeDetail.length === 0) {
@@ -287,11 +289,11 @@
 	                }
 	
 	                var recommendedRecipesIngredients = this.props.recipeDetail.recommendedBasedOnIngredients.map(function (recipe) {
-	                    return React.createElement(RecommendedRecipe, { key: recipe.recipe_id, recipe: recipe, recommederType: 'ingredients' });
+	                    return React.createElement(RecommendedRecipe, { key: recipe.recipe_id, recipe: recipe, recommederType: 'ingredients', parentRecipeId: _this7.props.key });
 	                });
 	
 	                var recommendedRecipesFlavors = this.props.recipeDetail.recommendedBasedOnFlavors.map(function (recipe) {
-	                    return React.createElement(RecommendedRecipe, { key: recipe.recipe_id, recipe: recipe, recommederType: 'flavors' });
+	                    return React.createElement(RecommendedRecipe, { key: recipe.recipe_id, recipe: recipe, recommederType: 'flavors', parentRecipeId: _this7.props.key });
 	                });
 	
 	                var prepTime = [];
@@ -390,7 +392,7 @@
 	                                    null,
 	                                    React.createElement(
 	                                        'a',
-	                                        { href: this.props.recipeDetail.sourceRecipe },
+	                                        { id: 'breakText', href: this.props.recipeDetail.sourceRecipe },
 	                                        this.props.recipeDetail.sourceRecipe
 	                                    )
 	                                )
@@ -406,35 +408,19 @@
 	                                React.createElement(
 	                                    'div',
 	                                    { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
-	                                    React.createElement('hr', null),
 	                                    React.createElement(
 	                                        'h4',
 	                                        null,
 	                                        React.createElement(
 	                                            'strong',
 	                                            null,
-	                                            'Recommended based on ingredients:'
+	                                            'Recommended recipes:'
 	                                        )
-	                                    )
+	                                    ),
+	                                    React.createElement('hr', null)
 	                                ),
 	                                React.createElement('br', null),
 	                                recommendedRecipesIngredients,
-	                                React.createElement('br', null),
-	                                React.createElement(
-	                                    'div',
-	                                    { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
-	                                    React.createElement('hr', null),
-	                                    React.createElement(
-	                                        'h4',
-	                                        null,
-	                                        React.createElement(
-	                                            'strong',
-	                                            null,
-	                                            'Recommended based on flavors:'
-	                                        )
-	                                    )
-	                                ),
-	                                React.createElement('br', null),
 	                                recommendedRecipesFlavors
 	                            )
 	                        )
@@ -453,27 +439,27 @@
 	    function RecommendedRecipe(props) {
 	        _classCallCheck(this, RecommendedRecipe);
 	
-	        var _this7 = _possibleConstructorReturn(this, (RecommendedRecipe.__proto__ || Object.getPrototypeOf(RecommendedRecipe)).call(this, props));
+	        var _this8 = _possibleConstructorReturn(this, (RecommendedRecipe.__proto__ || Object.getPrototypeOf(RecommendedRecipe)).call(this, props));
 	
-	        _this7.open = _this7.open.bind(_this7);
-	        _this7.close = _this7.close.bind(_this7);
-	        _this7.state = { showModal: false, recipeDetail: [], alreadyLoaded: false };
+	        _this8.open = _this8.open.bind(_this8);
+	        _this8.close = _this8.close.bind(_this8);
+	        _this8.state = { showModal: false, recipeDetail: [], alreadyLoaded: false };
 	        console.log('Constructor called');
-	        return _this7;
+	        return _this8;
 	    }
 	
 	    _createClass(RecommendedRecipe, [{
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate() {
-	            var _this8 = this;
+	            var _this9 = this;
 	
 	            if (!this.state.alreadyLoaded && this.state.showModal) {
 	                console.log('I was triggered during componentDidUpdate:  showModal:' + this.state.showModal + '  alreadyLoaded:' + this.state.alreadyLoaded);
 	                this.setState({ alreadyLoaded: true });
-	                var detailPath = "/api/recipe/recommended/" + this.props.recipe.id + "?recommenderType=" + this.props.recommederType;
+	                var detailPath = "/api/recipe/recommended/" + this.props.recipe.id + "?recommenderType=" + this.props.recommederType + "&parentRecipeId=" + this.props.parentRecipeId;
 	                console.log(detailPath);
 	                client({ method: 'GET', path: detailPath }).done(function (response) {
-	                    _this8.setState({ recipeDetail: response.entity });
+	                    _this9.setState({ recipeDetail: response.entity });
 	                });
 	            }
 	        }

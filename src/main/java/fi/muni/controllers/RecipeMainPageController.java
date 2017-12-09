@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.muni.DTOs.RecipeDTO;
 import fi.muni.facade.RecipeFacade;
-import fi.muni.services.IRecipeRecommender;
-import fi.muni.services.RecipeMainPageRecommender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

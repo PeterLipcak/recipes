@@ -9,18 +9,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Created by peter on 30.11.17.
  */
 @Service
-public class RecipeFlavorRecommender implements IRecipeRecommender {
+public class RecipeFlavorRecommender {
 
     @Autowired
     IRecipeDAO recipeDAO;
 
-    public static final int NUMBER_OF_RECIPES = 8;
+    public static final int NUMBER_OF_RECIPES = 4;
 
     List<Recipe> randomRecipes;
 
@@ -30,13 +31,12 @@ public class RecipeFlavorRecommender implements IRecipeRecommender {
         randomRecipes = recipeDAO.findAll();
     }
 
-    @Override
-    public List<Recipe> recommend(Integer id) {
+    public List<Recipe> recommend(Integer id, Set<Integer> ingredientRecipesIDs) {
         long startTime = System.currentTimeMillis();
         Collections.shuffle(randomRecipes);
         Recipe chosenRecipe = recipeDAO.findOne(id);
         List<Recipe> recommendedRecipes = randomRecipes.stream()
-                .filter(recipe -> !recipe.getRecipeName().equals(chosenRecipe.getRecipeName()))
+                .filter(recipe -> (!recipe.getRecipeName().equals(chosenRecipe.getRecipeName()) && !ingredientRecipesIDs.contains(recipe.getId())))
                 .sorted((r1, r2) -> Double.compare(recipesDifference(r1, chosenRecipe), recipesDifference(r2, chosenRecipe)))
                 .limit(NUMBER_OF_RECIPES)
                 .collect(Collectors.toList());
