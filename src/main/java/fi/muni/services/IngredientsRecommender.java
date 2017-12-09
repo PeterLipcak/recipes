@@ -16,15 +16,15 @@ public abstract class IngredientsRecommender{
     @Autowired
     IRecipeDAO recipeDAO;
     protected static Map<Recipe, Set<String>> joinTable = new HashMap<>();
-    private static Map<String, Float> recipesWeights = new HashMap<>();
+    //private static Map<String, Float> recipesWeights = new HashMap<>();
     private static Map<Integer, Float> cumulativeTimeDistribution = new HashMap<>();
-    private static final int NUMBER_OF_INGREDIENTS = 3559;
+    //private static final int NUMBER_OF_INGREDIENTS = 3559;
     private static final float WEIGHT_OF_INGREDIENTS = 0.8f;
     private static final float WEIGHT_OF_TIME = 0.2f;
 
     public IngredientsRecommender(IRecipeDAO recipeDAO) {
         this.recipeDAO = recipeDAO;
-        calculateWeights();
+        //calculateWeights();
         timeNeededIndex();
         findAllRecipes();
     }
@@ -54,16 +54,17 @@ public abstract class IngredientsRecommender{
         }
     }
 
-    private void calculateWeights(){
-        List<Object[]> tmpIngredients = recipeDAO.findIngredientsCount();
-        float weight;
+    // In the end this would not be used. We have better results without weights
+//     private void calculateWeights(){
+//         List<Object[]> tmpIngredients = recipeDAO.findIngredientsCount();
+//         float weight;
 
-        for (int i=0; i < tmpIngredients.size(); i++) {
-            if (i+2 >= NUMBER_OF_INGREDIENTS) weight = 1.0f;
-            else weight = (float)Math.pow(Math.log((float) i+2) / Math.log((float) NUMBER_OF_INGREDIENTS),2);
-            recipesWeights.put(tmpIngredients.get(i)[0].toString(), weight);
-        }
-    }
+//         for (int i=0; i < tmpIngredients.size(); i++) {
+//             if (i+2 >= NUMBER_OF_INGREDIENTS) weight = 1.0f;
+//             else weight = (float)Math.pow(Math.log((float) i+2) / Math.log((float) NUMBER_OF_INGREDIENTS),2);
+//             recipesWeights.put(tmpIngredients.get(i)[0].toString(), weight);
+//         }
+//     }
 
     float countSimilarity(Pair<Integer, Set<String>> data1, Recipe recipe2) {
     Set<String> ingredients2 = joinTable.get(recipe2);
@@ -89,11 +90,14 @@ public abstract class IngredientsRecommender{
         float intersection = 0;
         float union = 0;
         for (String s: i1){
-            if (i2.contains(s)) intersection += recipesWeights.get(s);
-            union += recipesWeights.get(s);
+            //if (i2.contains(s)) intersection += recipesWeights.get(s);
+            //union += recipesWeights.get(s);
+            if (i2.contains(s)) intersection += 1.0f;
+            union += 1.0f;
         }
         for (String s: i2){
-            union += recipesWeights.get(s);
+            //union += recipesWeights.get(s);
+            union += 1.0f;
         }
         return (intersection/(union-intersection));
     }
