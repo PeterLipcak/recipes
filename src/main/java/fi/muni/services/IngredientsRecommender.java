@@ -70,7 +70,7 @@ public abstract class IngredientsRecommender{
     Set<String> ingredients2 = joinTable.get(recipe2);
 
     float jIndex = calculateIndex(data1.getSecond(), ingredients2);
-    float timeNeeded = (float)Math.abs(cumulativeTimeDistribution.get(data1.getFirst()) - cumulativeTimeDistribution.get(recipe2.getTotalTimeInSeconds()));
+    float timeNeeded = 1.0f - (float)Math.abs(cumulativeTimeDistribution.get(data1.getFirst()) - cumulativeTimeDistribution.get(recipe2.getTotalTimeInSeconds()));
     return WEIGHT_OF_INGREDIENTS * jIndex + WEIGHT_OF_TIME * timeNeeded;
     }
 
